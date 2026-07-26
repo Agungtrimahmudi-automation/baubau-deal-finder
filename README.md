@@ -1,7 +1,7 @@
 # Baubau Deal Finder
 
 Pantau grup Facebook jual beli di Baubau, Sulawesi Tenggara.
-Temukan barang baru d harga second — otomatis, **100% gratis**, tanpa API berbayar.
+Temukan barang baru di harga second — otomatis, **100% gratis**, tanpa API berbayar.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-0A0A0A?style=for-the-badge&logo=n8n&logoColor=white)
