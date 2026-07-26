@@ -1,0 +1,33 @@
+{
+  "_doc": "Daftar grup Facebook yang akan dipantau. URL bisa partial — Apify akan scrape post di grup ini.",
+  "_catatan": "Tambah grup baru di sini, jangan hardcode di script.",
+  "groups": [
+    {
+      "name": "Jual Beli Baubau",
+      "url": "https://www.facebook.com/groups/jualbelibaubau",
+      "city": "Baubau",
+      "priority": "high",
+      "notes": "Grup utama, banyak listing"
+    },
+    {
+      "name": "Jual Beli Buton",
+      "url": "https://www.facebook.com/groups/jualbelibuton",
+      "city": "Baubau",
+      "priority": "medium",
+      "notes": "Cakupan kabupaten Buton"
+    },
+    {
+      "name": "Jual Beli Sulawesi Tenggara",
+      "url": "https://www.facebook.com/groups/jualbelisultra",
+      "city": "All",
+      "priority": "low",
+      "notes": "Grup provinsi, lebih banyak noise"
+    }
+  ],
+  "scrape_settings": {
+    "max_posts_per_group": 50,
+    "sort_by": "newest",
+    "include_comments": false,
+    "min_age_hours": 24
+  }
+}

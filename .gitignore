@@ -1,0 +1,39 @@
+# ── Rahasia — JANGAN PERNAH di-commit ──────────────────────────
+.env
+.env.local
+*.env
+!.env.example
+
+# Kunci API
+*API*.txt
+*key*.txt
+*token*.txt
+*secret*.txt
+credentials.json
+token.json
+*.pem
+*.ppk
+
+# Sementara
+.tmp/
+*.log
+*.html.bak
+data/scrape_cache/
+data/scrape_cache/**
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Claude Code
+.claude/settings.local.json

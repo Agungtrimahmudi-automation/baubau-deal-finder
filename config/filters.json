@@ -1,0 +1,63 @@
+{
+  "_doc": "Filter untuk deteksi scam dan scoring deal.",
+  "_cara_pakai": "Deal score = base_score * condition_multiplier - scam_penalty.",
+  "deal_scoring": {
+    "base_score_formula": "(reference_price - asking_price) / reference_price * 100",
+    "thresholds": {
+      "great_deal": 40,
+      "good_deal": 25,
+      "fair_deal": 10,
+      "skip": 0
+    },
+    "condition_multiplier": {
+      "new": 1.5,
+      "like_new": 1.2,
+      "used": 1.0,
+      "unknown": 0.8
+    }
+  },
+  "scam_indicators": {
+    "high_risk_patterns": [
+      "transfer dulu",
+      "bayar dp",
+      "dp aja",
+      "transfer only",
+      "wa only",
+      "no cod",
+      "cod tidak bisa",
+      "luar kota",
+      "kiriman dari",
+      "reseller",
+      "dropship",
+      "harga terlalu murah",
+      "below cost"
+    ],
+    "medium_risk_patterns": [
+      "hubungi",
+      "pm",
+      "dm",
+      "wa",
+      "chat only",
+      "harga nett",
+      "nego tipis",
+      "serius only",
+      "fast response"
+    ],
+    "low_risk_patterns": [
+      "cod baubau",
+      "cod kota",
+      "bisa cod",
+      "barang sendiri",
+      "pribadi",
+      "user biasa"
+    ],
+    "scoring": {
+      "high_risk": -30,
+      "medium_risk": -5,
+      "low_risk": 10
+    }
+  },
+  "minimum_score": 15,
+  "maximum_results_per_run": 20,
+  "notify_only_above": "good_deal"
+}

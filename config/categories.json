@@ -1,0 +1,94 @@
+{
+  "_doc": "Kategori barang + harga referensi. Score deal dihitung dari selisih harga referensi vs harga jual.",
+  "_cara_pakai": "Harga referensi = harga baru tipikal di marketplace. Deal score = (ref - asking) / ref * 100.",
+  "categories": [
+    {
+      "id": "hp",
+      "name": "HP / Smartphone",
+      "keywords": ["hp", "smartphone", "iphone", "samsung", "xiaomi", "oppo", "vivo", "realme", "hp murah", "jual hp"],
+      "price_ranges": {
+        "budget": { "min": 500000, "max": 2000000, "ref_new": 1500000 },
+        "mid": { "min": 2000000, "max": 5000000, "ref_new": 3500000 },
+        "high": { "min": 5000000, "max": 15000000, "ref_new": 8000000 }
+      },
+      "condition_keywords": {
+        "new": ["baru", "new", "masih segel", "bnib", "brand new", "sealed", "garansi resmi"],
+        "like_new": ["seperti baru", "like new", "99%", "98%", "mulus", "jarang pakai", "anti gores"],
+        "used": ["bekas", "used", "second", "sekenn", "minus", "lecet", "baret"]
+      }
+    },
+    {
+      "id": "laptop",
+      "name": "Laptop / Notebook",
+      "keywords": ["laptop", "notebook", "macbook", "lenovo", "asus", "hp laptop", "dell", "acer"],
+      "price_ranges": {
+        "budget": { "min": 1500000, "max": 4000000, "ref_new": 3000000 },
+        "mid": { "min": 4000000, "max": 10000000, "ref_new": 7000000 },
+        "high": { "min": 10000000, "max": 25000000, "ref_new": 15000000 }
+      },
+      "condition_keywords": {
+        "new": ["baru", "new", "sealed", "bnib", "garansi resmi"],
+        "like_new": ["seperti baru", "like new", "99%", "mulus", "jarang pakai"],
+        "used": ["bekas", "used", "second", "sekenn", "minus", "lecet"]
+      }
+    },
+    {
+      "id": "elektronik",
+      "name": "Elektronik Lainnya",
+      "keywords": ["tv", "ac", "kulkas", "mesin cuci", "speaker", "headset", "earphone", "kamera", "drone", "ps5", "ps4", "nintendo", "switch"],
+      "price_ranges": {
+        "budget": { "min": 100000, "max": 1000000, "ref_new": 500000 },
+        "mid": { "min": 1000000, "max": 5000000, "ref_new": 3000000 },
+        "high": { "min": 5000000, "max": 15000000, "ref_new": 8000000 }
+      },
+      "condition_keywords": {
+        "new": ["baru", "new", "sealed", "garansi"],
+        "like_new": ["seperti baru", "like new", "mulus"],
+        "used": ["bekas", "used", "second", "sekenn"]
+      }
+    },
+    {
+      "id": "kendaraan",
+      "name": "Kendaraan",
+      "keywords": ["motor", "mobil", "beat", "vario", "matic", "manual", "avanza", "xenia", "mio"],
+      "price_ranges": {
+        "motor": { "min": 1000000, "max": 30000000, "ref_new": 20000000 },
+        "mobil": { "min": 30000000, "max": 200000000, "ref_new": 150000000 }
+      },
+      "condition_keywords": {
+        "new": ["baru", "new", "0 km", "bensin baru"],
+        "like_new": ["seperti baru", "rendah", "low km", "mulus", "terawat"],
+        "used": ["bekas", "used", "second"]
+      }
+    },
+    {
+      "id": "buah",
+      "name": "Buah & Makanan Segar",
+      "keywords": ["buah", "mangga", "pisang", "durian", "manggis", "rambutan", "kelapa", "jeruk", "apep", "singkong", "ketela"],
+      "price_ranges": {
+        "per_kg": { "min": 5000, "max": 80000, "ref_new": 30000 },
+        "per_butir": { "min": 2000, "max": 50000, "ref_new": 15000 }
+      },
+      "condition_keywords": {
+        "fresh": ["segar", "fresh", "baru petik", "panen", "masak", "matang"],
+        "ok": ["bagus", "manis", "enak"],
+        "old": ["layu", "busuk", "sudah lama"]
+      }
+    },
+    {
+      "id": "furniture",
+      "name": "Furniture & Rumah Tangga",
+      "keywords": ["kursi", "meja", "lemari", "kasur", "spring bed", "sofa", "rak", "kitchen set", "kamar tidur"],
+      "price_ranges": {
+        "budget": { "min": 100000, "max": 1000000, "ref_new": 500000 },
+        "mid": { "min": 1000000, "max": 5000000, "ref_new": 3000000 },
+        "high": { "min": 5000000, "max": 20000000, "ref_new": 10000000 }
+      },
+      "condition_keywords": {
+        "new": ["baru", "new", "masih di packing", "segel"],
+        "like_new": ["seperti baru", "jarang pakai", "mulus"],
+        "used": ["bekas", "used", "second", "pindahan"]
+      }
+    }
+  ]
+}
