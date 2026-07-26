@@ -1,127 +1,128 @@
 # Baubau Deal Finder
 
-Pantau grup Facebook jual beli di Baubau, Sulawesi Tenggara.
-Temukan barang baru di harga second — otomatis, **100% gratis**, tanpa API berbayar.
+Monitors buy-and-sell Facebook groups in Baubau, Southeast Sulawesi.
+Finds new items at second-hand prices, automatically, **100% free**, no paid API.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-0A0A0A?style=for-the-badge&logo=n8n&logoColor=white)
 ![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)
 ![Gmail](https://img.shields.io/badge/Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white)
 
-**Status:** Dalam pengembangan — pipeline dan scoring sudah tested, deployment terjadwal belum
-diaktifkan (lihat checklist di bawah).
+**Status:** In development. The pipeline and scoring are tested; scheduled deployment isn't
+active yet (see the checklist below).
 
 ---
 
 ## Problem
 
-Grup Facebook jual beli Baubau banyak dan data berhamburan. Mau cari deal
-tapi males scroll karena noise. Kadang ada barang baru harga second yang
-menarik, tapi terlewat karena terlalu banyak listing.
+Baubau's buy-and-sell Facebook groups are numerous and the data is scattered. You want to
+find a good deal but don't feel like scrolling through the noise. Sometimes there's an
+interesting new item at a second-hand price, but it gets missed because there are too many
+listings.
 
 ## Solution
 
-Pipeline otomatis yang:
-1. Scrape listing terbaru dari grup Facebook
-2. Score setiap listing berdasarkan harga, kondisi, dan indikator scam
-3. Kirim email ringkasan hanya deal yang menarik
+An automated pipeline that:
+1. Scrapes the latest listings from Facebook groups
+2. Scores each listing based on price, condition, and scam indicators
+3. Sends a summary email of only the interesting deals
 
 ```mermaid
 flowchart LR
-    A["Schedule<br/>07:00 WITA"] --> B["scrape_fb_group.py<br/>Scrape grup Facebook"]
-    B --> C["score_deal.py<br/>Scoring harga & scam"]
-    C --> D["send_notification.py<br/>Email ringkasan deal"]
+    A["Schedule<br/>07:00 WITA"] --> B["scrape_fb_group.py<br/>Scrape Facebook group"]
+    B --> C["score_deal.py<br/>Price & scam scoring"]
+    C --> D["send_notification.py<br/>Deal summary email"]
 ```
 
-Workflow n8n (`n8n-workflow.json`) menjalankan alur yang sama secara terjadwal, bukan cuma
-manual dari CLI.
+The n8n workflow (`n8n-workflow.json`) runs the same flow on a schedule, not just manually
+from the CLI.
 
 ## Status
 
-- [x] Scoring engine (`score_deal.py`) — selesai, tested
-- [x] Email notifier (`send_notification.py`) — selesai
-- [x] Pipeline orchestrator (`run_pipeline.py`) — selesai, tested
-- [x] Config (groups, categories, filters) — selesai
-- [x] n8n workflow JSON — selesai, siap import
-- [x] Fixture data untuk testing — selesai
-- [ ] Install di PC / deploy ke VPS — belum diputuskan
-- [ ] Import workflow ke n8n.agungtrimahmudi.site — belum dilakukan
-- [ ] Setup `.env` (SMTP credentials) — belum diisi
+- [x] Scoring engine (`score_deal.py`), done, tested
+- [x] Email notifier (`send_notification.py`), done
+- [x] Pipeline orchestrator (`run_pipeline.py`), done, tested
+- [x] Config (groups, categories, filters), done
+- [x] n8n workflow JSON, done, ready to import
+- [x] Fixture data for testing, done
+- [ ] Install on a PC / deploy to a VPS, not yet decided
+- [ ] Import the workflow into n8n.agungtrimahmudi.site, not done yet
+- [ ] Set up `.env` (SMTP credentials), not filled in yet
 
 ## Quick Start (Dry Run)
 
-Tidak perlu install apa-apa. Cukup Python yang sudah ada:
+No installation needed. Just the Python already on the machine:
 
 ```bash
 cd "D:\Workflow Automation\Baubau Deal Finder"
 python tools/run_pipeline.py --dry-run --no-notify
 ```
 
-Lihat hasil scoring di `data/scored_listings.json`.
+See the scoring results in `data/scored_listings.json`.
 
-## Jalankan
+## Running It
 
 ```bash
 # Full pipeline
 python tools/run_pipeline.py
 
-# Atau stage per stage
+# Or stage by stage
 python tools/scrape_fb_group.py
 python tools/score_deal.py -i data/raw_listings.json -o data/scored_listings.json
 python tools/send_notification.py -i data/scored_listings.json
 ```
 
-## Mode Manual
+## Manual Mode
 
-Kalau scraping belum ready atau mau input sendiri:
+If scraping isn't ready yet or you want to enter listings by hand:
 ```bash
 python tools/scrape_fb_group.py --manual
 
-# Lalu paste listing:
+# Then paste listings:
 >> iPhone 14 BNIB|12500000|https://facebook.com/groups/xxx/posts/123
 >> Samsung S23 Bekas|8000000|https://facebook.com/groups/xxx/posts/456
->> selesai
+>> done
 ```
 
 ## n8n Integration
 
-File `n8n-workflow.json` siap di-import ke n8n:
-1. Buka n8n dashboard
-2. Import workflow → pilih file ini
-3. Setup Gmail OAuth2 credential
-4. Aktifkan
+The `n8n-workflow.json` file is ready to import into n8n:
+1. Open the n8n dashboard
+2. Import workflow, select this file
+3. Set up the Gmail OAuth2 credential
+4. Activate
 
-Workflow: Schedule (07:00 WITA) → Scoring → Email
+Workflow: Schedule (07:00 WITA) to Scoring to Email
 
-## Kategori yang Dipantau
+## Monitored Categories
 
-- HP / Smartphone
-- Laptop / Notebook
-- Elektronik (TV, AC, gaming console, dll)
-- Kendaraan (motor, mobil)
-- Buah & Makanan Segar
-- Furniture & Rumah Tangga
+- Phones / Smartphones
+- Laptops / Notebooks
+- Electronics (TV, AC, gaming consoles, etc.)
+- Vehicles (motorcycles, cars)
+- Fresh produce and food
+- Furniture & household items
 
-Edit `config/categories.json` untuk tambah/ubah kategori.
+Edit `config/categories.json` to add or change categories.
 
-## Struktur
+## Structure
 
 ```
 Baubau Deal Finder/
 ├── config/
-│   ├── groups.json        # Grup Facebook target
-│   ├── categories.json    # Kategori + harga referensi
-│   └── filters.json       # Threshold scoring + scam indicators
+│   ├── groups.json        # Target Facebook groups
+│   ├── categories.json    # Categories + reference prices
+│   └── filters.json       # Scoring thresholds + scam indicators
 ├── tools/
 │   ├── run_pipeline.py    # Orchestrator
 │   ├── scrape_fb_group.py # Scrape FB groups
 │   ├── score_deal.py      # Deal scoring engine
-│   ├── send_notification.py # Email notifikasi
-│   └── setup_env.py       # Verifikasi .env
+│   ├── send_notification.py # Email notifications
+│   └── setup_env.py       # .env verification
 ├── workflows/
 │   └── baubau-deal-finder.md
-├── n8n-workflow.json      # Siap import ke n8n
-├── data/                  # Hasil scraping + scoring (gitignored)
+├── n8n-workflow.json      # Ready to import into n8n
+├── data/                  # Scraping + scoring results (gitignored)
 ├── .env                   # Credentials (gitignored)
 ├── .env.example
 ├── .gitignore
@@ -131,13 +132,13 @@ Baubau Deal Finder/
 
 ## Cost
 
-- **Scraping:** gratis (Playwright atau requests+beautifulsoup)
-- **Email:** gratis (Gmail SMTP)
-- **Total:** $0/bulan
+- **Scraping:** free (Playwright or requests + beautifulsoup)
+- **Email:** free (Gmail SMTP)
+- **Total:** $0/month
 
-## Lisensi
+## License
 
-MIT — lihat [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
 
 ## 👤 Author
 
