@@ -12,15 +12,24 @@ berisi deal paling menarik yang sudah di-scoring otomatis.
 
 ```
 scrape_fb_group.py → score_deal.py → send_notification.py
-     (Apify)         (scoring engine)     (email SMTP)
+   (Playwright)       (scoring)        (email SMTP)
 ```
+
+**100% GRATIS** — tidak pakai API berbayar. Scraping pakai Playwright
+(open source browser automation).
 
 ## Stages
 
 ### 1. Scrape (`tools/scrape_fb_group.py`)
 
 Ambil listing terbaru dari grup Facebook yang sudah didaftarkan di
-`config/groups.json`.
+`config/groups.json`. Pakai Playwright (headless Chromium) — gratis.
+
+**Pertama kali setup:**
+```bash
+pip install playwright
+playwright install chromium
+```
 
 **Input:**
 - `config/groups.json` — daftar grup URL dan setting scraping
@@ -31,19 +40,30 @@ Ambil listing terbaru dari grup Facebook yang sudah didaftarkan di
 
 **Cara pakai:**
 ```bash
-# Live scraping
+# Scrape semua grup
 python tools/scrape_fb_group.py
 
 # Dry run (fixture data untuk testing)
 python tools/scrape_fb_group.py --dry-run
 
 # Scrape satu grup spesifik
-python tools/scrape_fb_group.py --group "https://facebook.com/groups/namagrup"
+python tools/scrape_fb_group.py -g "https://facebook.com/groups/namagrup"
+
+# Input manual (paste listing sendiri)
+python tools/scrape_fb_group.py --manual
+```
+
+**Mode manual:**
+Ketika scraping gagal atau mau input sendiri:
+```
+>> iPhone 14 BNIB|12500000|https://facebook.com/groups/xxx/posts/123
+>> Samsung S23 Bekas|8000000|https://facebook.com/groups/xxx/posts/456
+>> selesai
 ```
 
 **Ketergantungan:**
-- `APIFY_API_TOKEN` di `.env` (gratis: 10.000 results/bulan)
-- Free tier Apify: https://apify.com
+- Playwright + Chromium (gratis, open source)
+- Tidak butuh API key, cookies, atau akun Facebook
 
 ### 2. Score (`tools/score_deal.py`)
 
@@ -63,7 +83,6 @@ Hitung skor untuk setiap listing berdasarkan:
 **Cara pakai:**
 ```bash
 python tools/score_deal.py --input data/raw_listings.json --output data/scored_listings.json
-python tools/scrape_fb_group.py --dry-run && python tools/score_deal.py -i data/raw_listings.json
 ```
 
 **Scoring Formula:**
@@ -103,7 +122,7 @@ python tools/send_notification.py --input data/scored_listings.json --dry-run
 Jalankan semua stage sekaligus:
 
 ```bash
-# Full pipeline (live)
+# Full pipeline
 python tools/run_pipeline.py
 
 # Dry run
@@ -111,9 +130,6 @@ python tools/run_pipeline.py --dry-run
 
 # Mulai dari scoring (skip scraping)
 python tools/run_pipeline.py --from score
-
-# Hanya kirim notifikasi
-python tools/run_pipeline.py --from notify --no-notify
 ```
 
 ## Config Reference
@@ -130,14 +146,12 @@ Threshold scoring dan indikator scam. Edit untuk tuning sensitivity.
 
 ## Edge Cases
 
-- **Scrape gagal (timeout/blocked):** Coba lagi 5 menit kemudian. Apify
-  free tier tidak membatasi retry, tapi ada concurrent run limit 1.
+- **Playwright gagal (Facebook block):** Coba lagi beberapa menit kemudian.
+  Atau pakai mode `--manual` untuk input sendiri.
 - **Harga tidak terdeteksi:** Listing tanpa harga di-skip otomatis.
 - **Kategori tidak match:** Listing tanpa keyword match di-skip.
 - **Scam terdeteksi:** Penalty -30 untuk high risk, -5 untuk medium.
-  Jika masih positif setelah penalty, tetap masuk tapi dengan label rendah.
-- **Duplicate listing:** Dedup by URL. History 30 hari disimpan di
-  `data/all_listings.json`.
+- **Duplicate listing:** Dedup by URL. History 30 hari disimpan.
 
 ## Scheduling
 
@@ -150,15 +164,15 @@ Action: python D:\Workflow Automation\Baubau Deal Finder\tools\run_pipeline.py
 
 ### Atau via Hermes cron job
 ```
-Schedule: 0 7 * * *  (07:00 WITA = 23:00 UTC previous day)
+Schedule: 0 23 * * *  (23:00 UTC = 07:00 WITA keesokan hari)
 ```
 
 ## Jebakan
 
-- **Apify free tier:** 10.000 results/bulan. Satu grup ~50 posts = ~300
-  results per hari. Pakai 6 grup = 1.800/hari = 54.000/bulan. OVER LIMIT.
-  **Solusi:** Batasi max_posts_per_group atau pantau fewer groups.
-- **Facebook memblokir scraping:** Apify handle ini, tapi kadang perlu
-  refresh cookies. Cek dashboard Apify jika run gagal.
+- **Facebook mendeteksi Playwright:** Kadang muncul captcha atau blocking.
+  **Solusi:** Pakai mode `--manual` sebagai fallback, atau jalankan
+  scraping tidak terlalu sering (1-2x sehari maks).
+- **Grup privat:** Harus join dulu. Playwright perlu cookies login
+  untuk grup privat (belum didukung, untuk versi ini hanya grup publik).
 - **Harga referensi perlu update:** Harga barang berubah. Update
   `config/categories.json` secara berkala.

@@ -1,6 +1,6 @@
 {
-  "_doc": "Daftar grup Facebook yang akan dipantau. URL bisa partial — Apify akan scrape post di grup ini.",
-  "_catatan": "Tambah grup baru di sini, jangan hardcode di script.",
+  "_doc": "Daftar grup Facebook yang akan dipantau. Playwright buka langsung dari browser.",
+  "_catatan": "Grup harus bersifat publik. Tambah grup baru di sini.",
   "groups": [
     {
       "name": "Jual Beli Baubau",
@@ -25,9 +25,8 @@
     }
   ],
   "scrape_settings": {
-    "max_posts_per_group": 50,
-    "sort_by": "newest",
-    "include_comments": false,
-    "min_age_hours": 24
+    "max_posts_per_group": 30,
+    "scroll_rounds": 3,
+    "wait_between_scrolls": 2
   }
 }

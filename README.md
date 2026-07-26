@@ -3,6 +3,8 @@
 Pantau grup Facebook jual beli di Baubau, Sulawesi Tenggara.
 Temukan barang baru d harga second — otomatis.
 
+**100% GRATIS** — tidak pakai API berbayar. Scraping pakai Playwright.
+
 ## Masalah
 
 Grup Facebook jual beli Baubau banyak dan data berhamburan. Mau cari deal
@@ -12,17 +14,18 @@ menarik, tapi terlewat karena terlalu banyak listing.
 ## Solusi
 
 Pipeline otomatis yang:
-1. Scrape listing terbaru dari grup Facebook (via Apify)
+1. Scrape listing terbaru dari grup Facebook (via Playwright — gratis)
 2. Score setiap listing berdasarkan harga, kondisi, dan indikator scam
 3. Kirim email ringkasan hanya deal yang menarik
 
 ## Setup
 
-### 1. Daftar Apify (gratis)
+### 1. Install Playwright
 
-1. Buka https://apify.com → Sign up (bisa pakai Google/GitHub)
-2. Buka Settings → Integrations → API Token → Copy
-3. Token gratis: 10.000 results/bulan
+```bash
+pip install playwright
+playwright install chromium
+```
 
 ### 2. Setup email notification
 
@@ -39,7 +42,7 @@ cd "D:\Workflow Automation\Baubau Deal Finder"
 # Copy template
 cp .env.example .env
 
-# Edit .env — isi token Apify dan SMTP
+# Edit .env — isi SMTP credentials
 ```
 
 ### 4. Edit target grup
@@ -49,7 +52,7 @@ Buka `config/groups.json` — ganti/grub Facebook yang mau dipantau.
 ### 5. Test
 
 ```bash
-# Dry run (tidak pakai Apify, pakai fixture data)
+# Dry run (tidak scraping, pakai fixture data)
 python tools/run_pipeline.py --dry-run
 
 # Cek hasil
@@ -64,8 +67,20 @@ python tools/run_pipeline.py
 
 # Atau stage per stage
 python tools/scrape_fb_group.py
-python tools/score_deal.py --input data/raw_listings.json --output data/scored_listings.json
-python tools/send_notification.py --input data/scored_listings.json
+python tools/score_deal.py -i data/raw_listings.json -o data/scored_listings.json
+python tools/send_notification.py -i data/scored_listings.json
+```
+
+## Mode Manual
+
+Kalau scraping gagal atau mau input sendiri:
+```bash
+python tools/scrape_fb_group.py --manual
+
+# Lalu paste listing:
+>> iPhone 14 BNIB|12500000|https://facebook.com/groups/xxx/posts/123
+>> Samsung S23 Bekas|8000000|https://facebook.com/groups/xxx/posts/456
+>> selesai
 ```
 
 ## Kategori yang Dipantau
@@ -89,7 +104,7 @@ Baubau Deal Finder/
 │   └── filters.json       # Threshold scoring + scam indicators
 ├── tools/
 │   ├── run_pipeline.py    # Orchestrator (jalankan semua stage)
-│   ├── scrape_fb_group.py # Scrape via Apify
+│   ├── scrape_fb_group.py # Scrape via Playwright (GRATIS)
 │   ├── score_deal.py      # Deal scoring engine
 │   ├── send_notification.py # Email notifikasi
 │   └── setup_env.py       # Verifikasi .env
@@ -105,9 +120,9 @@ Baubau Deal Finder/
 
 ## Cost
 
-- **Apify free tier:** 10.000 results/bulan, $0
+- **Playwright:** gratis (open source)
 - **Gmail SMTP:** gratis
-- **Total:** $0/bulan (sampai free tier habis)
+- **Total:** $0/bulan selamanya
 
 ## License
 

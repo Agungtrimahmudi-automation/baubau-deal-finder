@@ -14,12 +14,11 @@ token.json
 *.pem
 *.ppk
 
-# Sementara
+# Sementara & data yang bisa dibuat ulang
 .tmp/
+data/
 *.log
 *.html.bak
-data/scrape_cache/
-data/scrape_cache/**
 
 # Python
 __pycache__/
