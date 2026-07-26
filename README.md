@@ -3,7 +3,7 @@
 Pantau grup Facebook jual beli di Baubau, Sulawesi Tenggara.
 Temukan barang baru d harga second — otomatis.
 
-**100% GRATIS** — tidak pakai API berbayar. Scraping pakai Playwright.
+**100% GRATIS** — tidak pakai API berbayar.
 
 ## Masalah
 
@@ -14,50 +14,32 @@ menarik, tapi terlewat karena terlalu banyak listing.
 ## Solusi
 
 Pipeline otomatis yang:
-1. Scrape listing terbaru dari grup Facebook (via Playwright — gratis)
+1. Scrape listing terbaru dari grup Facebook
 2. Score setiap listing berdasarkan harga, kondisi, dan indikator scam
 3. Kirim email ringkasan hanya deal yang menarik
 
-## Setup
+## Status
 
-### 1. Install Playwright
+- [x] Scoring engine (score_deal.py) — selesai, tested
+- [x] Email notifier (send_notification.py) — selesai
+- [x] Pipeline orchestrator (run_pipeline.py) — selesai, tested
+- [x] Config (groups, categories, filters) — selesai
+- [x] n8n workflow JSON — selesai, siap import
+- [x] Fixture data untuk testing — selesai
+- [ ] Install di PC / deploy ke VPS — belum diputuskan
+- [ ] Import workflow ke n8n.agungtrimahmudi.site — belum dilakukan
+- [ ] Setup .env (SMTP credentials) — belum diisi
 
-```bash
-pip install playwright
-playwright install chromium
-```
+## Quick Start (Dry Run)
 
-### 2. Setup email notification
-
-Butuh SMTP untuk kirim email. Paling gampang pakai Gmail App Password:
-1. Buka https://myaccount.google.com/apppasswords
-2. Buat app password untuk "Mail"
-3. Copy 16 karakter password
-
-### 3. Konfigurasi
+Tidak perlu install apa-apa. Cukup Python yang sudah ada:
 
 ```bash
 cd "D:\Workflow Automation\Baubau Deal Finder"
-
-# Copy template
-cp .env.example .env
-
-# Edit .env — isi SMTP credentials
+python tools/run_pipeline.py --dry-run --no-notify
 ```
 
-### 4. Edit target grup
-
-Buka `config/groups.json` — ganti/grub Facebook yang mau dipantau.
-
-### 5. Test
-
-```bash
-# Dry run (tidak scraping, pakai fixture data)
-python tools/run_pipeline.py --dry-run
-
-# Cek hasil
-cat data/scored_listings.json
-```
+Lihat hasil scoring di `data/scored_listings.json`.
 
 ## Jalankan
 
@@ -73,7 +55,7 @@ python tools/send_notification.py -i data/scored_listings.json
 
 ## Mode Manual
 
-Kalau scraping gagal atau mau input sendiri:
+Kalau scraping belum ready atau mau input sendiri:
 ```bash
 python tools/scrape_fb_group.py --manual
 
@@ -82,6 +64,16 @@ python tools/scrape_fb_group.py --manual
 >> Samsung S23 Bekas|8000000|https://facebook.com/groups/xxx/posts/456
 >> selesai
 ```
+
+## n8n Integration
+
+File `n8n-workflow.json` siap di-import ke n8n:
+1. Buka n8n dashboard
+2. Import workflow → pilih file ini
+3. Setup Gmail OAuth2 credential
+4. Aktifkan
+
+Workflow: Schedule (07:00 WITA) → Scoring → Email
 
 ## Kategori yang Dipantau
 
@@ -103,13 +95,14 @@ Baubau Deal Finder/
 │   ├── categories.json    # Kategori + harga referensi
 │   └── filters.json       # Threshold scoring + scam indicators
 ├── tools/
-│   ├── run_pipeline.py    # Orchestrator (jalankan semua stage)
-│   ├── scrape_fb_group.py # Scrape via Playwright (GRATIS)
+│   ├── run_pipeline.py    # Orchestrator
+│   ├── scrape_fb_group.py # Scrape FB groups
 │   ├── score_deal.py      # Deal scoring engine
 │   ├── send_notification.py # Email notifikasi
 │   └── setup_env.py       # Verifikasi .env
 ├── workflows/
 │   └── baubau-deal-finder.md
+├── n8n-workflow.json      # Siap import ke n8n
 ├── data/                  # Hasil scraping + scoring (gitignored)
 ├── .env                   # Credentials (gitignored)
 ├── .env.example
@@ -120,9 +113,9 @@ Baubau Deal Finder/
 
 ## Cost
 
-- **Playwright:** gratis (open source)
-- **Gmail SMTP:** gratis
-- **Total:** $0/bulan selamanya
+- **Scraping:** gratis (Playwright atau requests+beautifulsoup)
+- **Email:** gratis (Gmail SMTP)
+- **Total:** $0/bulan
 
 ## License
 
