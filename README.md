@@ -8,6 +8,9 @@ Temukan barang baru d harga second — otomatis, **100% gratis**, tanpa API berb
 ![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)
 ![Gmail](https://img.shields.io/badge/Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white)
 
+**Status:** Studi kasus teknis / proyek personal — pipeline dan scoring sudah tested, deployment
+terjadwal belum diaktifkan (lihat checklist di bawah).
+
 ---
 
 ## Problem
