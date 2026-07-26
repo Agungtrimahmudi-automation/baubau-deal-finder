@@ -1,0 +1,125 @@
+{
+  "name": "Baubau Deal Finder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 23 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd \"D:\\Workflow Automation\\Baubau Deal Finder\" && python tools/run_pipeline.py --from score --no-notify 2>&1"
+      },
+      "id": "run-scoring",
+      "name": "Run Scoring Pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [460, 0]
+    },
+    {
+      "parameters": {
+        "filePath": "D:\\Workflow Automation\\Baubau Deal Finder\\data\\scored_listings.json",
+        "options": {}
+      },
+      "id": "read-scored",
+      "name": "Read Scored Listings",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [920, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse scored listings and format for email\nconst items = $input.all();\nlet listings = [];\n\n// The file content comes as binary or text\nfor (const item of items) {\n  if (item.json.data) {\n    try {\n      listings = JSON.parse(item.json.data);\n    } catch(e) {}\n  }\n  if (item.json.content) {\n    try {\n      listings = JSON.parse(item.json.content);\n    } catch(e) {}\n  }\n}\n\n// Fallback: try reading from the binary property\nif (listings.length === 0) {\n  for (const item of items) {\n    if (item.binary && item.binary.data) {\n      const content = Buffer.from(item.binary.data.data, 'base64').toString('utf-8');\n      try {\n        listings = JSON.parse(content);\n      } catch(e) {}\n    }\n  }\n}\n\nif (listings.length === 0) {\n  return [{ json: { subject: 'Baubau Deal Finder — Tidak ada deal hari ini', body: '<h2>Tidak ada deal menarik hari ini.</h2>', hasDeals: false } }];\n}\n\nconst great = listings.filter(l => l.score_label === 'great_deal');\nconst good = listings.filter(l => l.score_label === 'good_deal');\nconst fair = listings.filter(l => l.score_label === 'fair_deal');\n\nconst today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });\n\nlet body = `\n<h2 style=\"color:#333;\">Baubau Deal Finder — ${today}</h2>\n<p>Ditemukan <strong>${listings.length}</strong> deal: ${great.length} great, ${good.length} good, ${fair.length} fair.</p>\n`;\n\nconst renderCards = (label, emoji, items, color) => {\n  if (items.length === 0) return '';\n  let html = `<h3>${emoji} ${label}</h3>`;\n  for (const item of items) {\n    const title = (item.title || 'Tanpa judul').substring(0, 80);\n    const price = item.asking_price || 0;\n    const ref = item.reference_price || 0;\n    const savings = item.savings || 0;\n    const savingsPct = item.savings_pct || 0;\n    const condition = {new:'Baru',like_new:'Seperti Baru',used:'Bekas'}[item.condition] || item.condition;\n    const cat = item.category_name || '-';\n    const url = item.url || '#';\n    const group = item.group_name || item.source || '-';\n    const score = item.score || 0;\n    \n    html += `\n    <div style=\"border-left:5px solid ${color};padding:12px;margin:8px 0;background:#f9f9f9;border-radius:4px;\">\n      <span style=\"font-size:20px;font-weight:bold;color:${color};\">${score.toFixed(0)}</span>\n      <h4 style=\"margin:4px 0;\"><a href=\"${url}\">${title}</a></h4>\n      <p style=\"color:#e91e63;font-weight:bold;\">Rp${price.toLocaleString('id-ID')} <span style=\"text-decoration:line-through;color:#999;\">Rp${ref.toLocaleString('id-ID')}</span></p>\n      <p style=\"color:#4CAF50;\">Hemat Rp${savings.toLocaleString('id-ID')} (${savingsPct.toFixed(0)}% off) — Kondisi: ${condition}</p>\n      <p style=\"color:#666;font-size:0.9em;\">Kategori: ${cat} | Grup: ${group}</p>\n    </div>`;\n  }\n  return html;\n};\n\nbody += renderCards('Great Deal', '🔥', great, '#4CAF50');\nbody += renderCards('Good Deal', '👍', good, '#2196F3');\nbody += renderCards('Fair Deal', '💡', fair, '#FF9800');\n\nbody += `\n<hr style=\"margin-top:20px;\">\n<p style=\"color:#999;font-size:0.8em;\">Dikirim oleh Baubau Deal Finder | Dari Facebook Groups Baubau</p>\n`;\n\nconst subject = `Baubau Deal Finder — ${listings.length} deal menarik ditemukan`;\n\nreturn [{ json: { subject, body, hasDeals: true, count: listings.length } }];"
+      },
+      "id": "format-email",
+      "name": "Format Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1380, 0]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.hasDeals ? $env.NOTIFY_EMAIL : '' }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1840, 0],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "filePath": "D:\\Workflow Automation\\Baubau Deal Finder\\.tmp\\last_run.json",
+        "fileContent": "={\"timestamp\":\"{{ $now.toISO() }}\",\"deals_found\":{{ $json.count }},\"has_deals\":{{ $json.hasDeals }}}",
+        "options": {}
+      },
+      "id": "save-run-log",
+      "name": "Save Run Log",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [1840, 200]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          { "node": "Run Scoring Pipeline", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Run Scoring Pipeline": {
+      "main": [
+        [
+          { "node": "Read Scored Listings", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Read Scored Listings": {
+      "main": [
+        [
+          { "node": "Format Email", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Format Email": {
+      "main": [
+        [
+          { "node": "Send Email", "type": "main", "index": 0 },
+          { "node": "Save Run Log", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Makassar"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-07-26T00:00:00.000Z",
+  "versionId": "1"
+}
