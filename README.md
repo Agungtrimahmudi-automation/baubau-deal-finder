@@ -1,34 +1,49 @@
 # Baubau Deal Finder
 
 Pantau grup Facebook jual beli di Baubau, Sulawesi Tenggara.
-Temukan barang baru d harga second — otomatis.
+Temukan barang baru d harga second — otomatis, **100% gratis**, tanpa API berbayar.
 
-**100% GRATIS** — tidak pakai API berbayar.
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![n8n](https://img.shields.io/badge/n8n-0A0A0A?style=for-the-badge&logo=n8n&logoColor=white)
+![Facebook](https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white)
+![Gmail](https://img.shields.io/badge/Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white)
 
-## Masalah
+---
+
+## Problem
 
 Grup Facebook jual beli Baubau banyak dan data berhamburan. Mau cari deal
 tapi males scroll karena noise. Kadang ada barang baru harga second yang
 menarik, tapi terlewat karena terlalu banyak listing.
 
-## Solusi
+## Solution
 
 Pipeline otomatis yang:
 1. Scrape listing terbaru dari grup Facebook
 2. Score setiap listing berdasarkan harga, kondisi, dan indikator scam
 3. Kirim email ringkasan hanya deal yang menarik
 
+```mermaid
+flowchart LR
+    A["Schedule<br/>07:00 WITA"] --> B["scrape_fb_group.py<br/>Scrape grup Facebook"]
+    B --> C["score_deal.py<br/>Scoring harga & scam"]
+    C --> D["send_notification.py<br/>Email ringkasan deal"]
+```
+
+Workflow n8n (`n8n-workflow.json`) menjalankan alur yang sama secara terjadwal, bukan cuma
+manual dari CLI.
+
 ## Status
 
-- [x] Scoring engine (score_deal.py) — selesai, tested
-- [x] Email notifier (send_notification.py) — selesai
-- [x] Pipeline orchestrator (run_pipeline.py) — selesai, tested
+- [x] Scoring engine (`score_deal.py`) — selesai, tested
+- [x] Email notifier (`send_notification.py`) — selesai
+- [x] Pipeline orchestrator (`run_pipeline.py`) — selesai, tested
 - [x] Config (groups, categories, filters) — selesai
 - [x] n8n workflow JSON — selesai, siap import
 - [x] Fixture data untuk testing — selesai
 - [ ] Install di PC / deploy ke VPS — belum diputuskan
 - [ ] Import workflow ke n8n.agungtrimahmudi.site — belum dilakukan
-- [ ] Setup .env (SMTP credentials) — belum diisi
+- [ ] Setup `.env` (SMTP credentials) — belum diisi
 
 ## Quick Start (Dry Run)
 
@@ -117,6 +132,14 @@ Baubau Deal Finder/
 - **Email:** gratis (Gmail SMTP)
 - **Total:** $0/bulan
 
-## License
+## Lisensi
 
-MIT — Copyright (c) 2025 Agung Tri Mahmudi
+MIT — lihat [LICENSE](LICENSE).
+
+## 👤 Author
+
+**Agung Tri Mahmudi**
+
+- Email: agungtrimahmudi.it@gmail.com
+- GitHub: [github.com/Agungtrimahmudi-automation](https://github.com/Agungtrimahmudi-automation)
+- LinkedIn: [linkedin.com/in/agung-tri-mahmudi](https://linkedin.com/in/agung-tri-mahmudi)
