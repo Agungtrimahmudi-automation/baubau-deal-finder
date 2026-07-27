@@ -1,0 +1,19 @@
+services:
+  baubau-deal-finder:
+    build: .
+    container_name: baubau_deal_finder
+    restart: unless-stopped
+    environment:
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - NOTIFY_EMAIL=${NOTIFY_EMAIL}
+    volumes:
+      - ./data:/app/data
+    networks:
+      - n8n-stack_default
+
+networks:
+  n8n-stack_default:
+    external: true

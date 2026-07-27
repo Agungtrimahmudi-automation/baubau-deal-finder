@@ -19,8 +19,8 @@ from datetime import datetime
 
 
 def load_env():
-    """Load .env file."""
-    env_path = Path(__file__).resolve().parent.parent / ".env"
+    """Load .env file from the parent Workflow Automation folder, not the project folder."""
+    env_path = Path(__file__).resolve().parent.parent.parent / ".env"
     if env_path.exists():
         with open(env_path) as f:
             for line in f:

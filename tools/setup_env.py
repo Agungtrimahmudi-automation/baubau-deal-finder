@@ -15,12 +15,12 @@ from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ENV_PATH = BASE_DIR / ".env"
+ENV_PATH = BASE_DIR.parent / ".env"
 EXAMPLE_PATH = BASE_DIR / ".env.example"
 
 # Required keys with descriptions
+# Catatan: APIFY_API_TOKEN dihapus, scraping sudah pindah ke Playwright (gratis, tanpa API key).
 REQUIRED_KEYS = {
-    "APIFY_API_TOKEN": "Apify API token (daftar gratis di apify.com)",
     "SMTP_HOST": "SMTP server (default: smtp.gmail.com)",
     "SMTP_PORT": "SMTP port (default: 587)",
     "SMTP_USER": "Email pengirim",
@@ -32,8 +32,8 @@ REQUIRED_KEYS = {
 def main():
     if not ENV_PATH.exists():
         print(f"ERROR: .env not found at {ENV_PATH}", file=sys.stderr)
-        print(f"Copy .env.example ke .env dan isi nilainya:", file=sys.stderr)
-        print(f"  cp .env.example .env", file=sys.stderr)
+        print(f"Tambahkan key di {EXAMPLE_PATH} ke .env induk, lalu isi nilainya:", file=sys.stderr)
+        print(f"  {ENV_PATH}", file=sys.stderr)
         sys.exit(1)
     
     env = {}
