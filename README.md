@@ -1,7 +1,7 @@
 # Baubau Deal Finder
 
 Monitors buy-and-sell Facebook groups in Baubau, Southeast Sulawesi.
-Finds new items at second-hand prices, automatically, **100% free**, no paid API.
+Finds new items at second-hand prices automatically, without a paid API or a paid proxy.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-0A0A0A?style=for-the-badge&logo=n8n&logoColor=white)
