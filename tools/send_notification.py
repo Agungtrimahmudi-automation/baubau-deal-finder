@@ -19,7 +19,7 @@ from datetime import datetime
 
 
 def load_env():
-    """Load .env file from the parent Workflow Automation folder, not the project folder."""
+    """Load .env file from the parent Workspace folder, not the project folder."""
     env_path = Path(__file__).resolve().parent.parent.parent / ".env"
     if env_path.exists():
         with open(env_path) as f:

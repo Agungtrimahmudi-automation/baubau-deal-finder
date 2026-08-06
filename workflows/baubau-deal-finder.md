@@ -159,7 +159,7 @@ Threshold scoring dan indikator scam. Edit untuk tuning sensitivity.
 ```
 Task: Baubau Deal Finder
 Trigger: Daily 07:00 WITA
-Action: python D:\Workflow Automation\Baubau Deal Finder\tools\run_pipeline.py
+Action: python D:\Workspace\projects\baubau-deal-finder\tools\run_pipeline.py
 ```
 
 ### Atau via Hermes cron job

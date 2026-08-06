@@ -60,7 +60,7 @@ from the CLI.
 No installation needed. Just the Python already on the machine:
 
 ```bash
-cd "D:\Workflow Automation\Baubau Deal Finder"
+cd "D:\Workspace\projects\baubau-deal-finder"
 python tools/run_pipeline.py --dry-run --no-notify
 ```
 
